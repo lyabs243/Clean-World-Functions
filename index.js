@@ -1,4 +1,5 @@
 const {onCall} = require("firebase-functions/v2/https");
+const {onSchedule} = require("firebase-functions/v2/scheduler");
 
 const admin = require("firebase-admin");
 admin.initializeApp({
@@ -6,6 +7,7 @@ admin.initializeApp({
 });
 
 const NotificationItem = require("./items/notification_item");
+const NewsItem = require("./items/news_item");
 
 exports.sendNotification = onCall( async (request) => {
   const data = request.data;
@@ -32,9 +34,16 @@ exports.sendNotification = onCall( async (request) => {
   };
 });
 
+// every 30 minuters, check for pending news
+exports.publishScheduledNews = onSchedule("every 30 minutes", async () => {
+  await NewsItem.publishScheduledNews();
+});
+
 // Test operations
 const {
   testNotification,
+  testNews,
 } = require("./tests");
 
 exports.testNotification = testNotification;
+exports.testNews = testNews;
