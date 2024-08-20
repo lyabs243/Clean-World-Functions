@@ -79,9 +79,8 @@ class NewsItem {
    */
   static async publishScheduledNews() {
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
     const news = await admin.firestore().collection(collectionNews)
-        .where(fieldNewsDate, "<", now)
+        .where(fieldNewsDate, "<=", now)
         .where(fieldNewsStatus, "==", "pending").get();
 
     const totalNews = news.docs.length;
@@ -102,6 +101,7 @@ class NewsItem {
         image: data.photo_url,
         data: {
           news_id: item.id,
+          type: "2",
         },
         type: "2",
         creationDate: new Date(),
